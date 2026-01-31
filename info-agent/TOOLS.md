@@ -13,18 +13,23 @@ Get transcript from a YouTube video.
 - language (string, optional): Preferred language (default: "en")
 
 **Returns:**
-- title: Video title
-- channel: Creator name
-- duration: Video length
-- transcript: Full text with timestamps
-- description: Video description
+```yaml
+type: object
+properties:
+  title: string - Video title
+  channel: string - Creator/channel name
+  duration: string - Video length (e.g., "45:23")
+  transcript: string - Full text with timestamps
+  description: string - Video description
+  url: string - Original URL for attribution
+```
 
 **How it works:**
 1. Extract video ID from URL
 2. Fetch available transcripts (auto-generated or manual)
 3. Return structured transcript
 
-**Note:** Uses youtube-transcript-api or similar service.
+**Note:** Uses youtube-transcript-api or yt-dlp.
 
 ### read_url
 Read content from web pages.
@@ -33,26 +38,49 @@ Read content from web pages.
 **Parameters:**
 - url (string, required): Page URL
 
-**Returns:** Page content as markdown
+**Returns:**
+```yaml
+type: object
+properties:
+  title: string - Page title
+  content: string - Page content as markdown
+  author: string | null - Author if available
+  date: string | null - Publish date if available
+  url: string - Original URL for attribution
+```
 
 ### read_file
 Read local files.
 
-**When to use:** Loading existing knowledge, agent memories
+**When to use:** Loading existing knowledge, agent memories, memory files
 **Parameters:**
 - path (string, required): File path
 
-**Returns:** File contents
+**Returns:**
+```yaml
+type: object
+properties:
+  content: string - File contents
+  path: string - File path
+  exists: boolean - Whether file existed
+```
 
 ### write_file
 Save content to files.
 
-**When to use:** Saving extracted knowledge (after approval)
+**When to use:** Saving extracted knowledge (after approval), updating memory
 **Parameters:**
 - path (string, required): File path
 - content (string, required): Content to save
 
-**Returns:** Confirmation
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  path: string - Written file path
+  message: string - Confirmation or error
+```
 
 ---
 
@@ -74,12 +102,87 @@ Agent-Specific:
 ### search_knowledge
 Search existing knowledge base.
 
-**When to use:** Finding related existing knowledge
+**When to use:** Finding related existing knowledge, checking for duplicates
 **Parameters:**
 - query (string, required): Search terms
-- path (string, optional): Limit to specific directory
+- path (string, optional): Limit to specific directory (e.g., "knowledge/patterns/")
 
-**Returns:** Matching files and excerpts
+**Returns:**
+```yaml
+type: object
+properties:
+  matches: array
+    items:
+      - file: string - File path
+      - excerpt: string - Matching content
+      - relevance: number - 0-1 relevance score
+  count: integer - Number of matches
+```
+
+---
+
+## Memory Operations
+
+### load_memory
+Load memory files at session start.
+
+**When to use:** Beginning of any session or mode
+**Files to load:**
+- `memory/sources.md` - Check what's already ingested
+- `memory/decisions.md` - Recent decision context
+- `memory/lessons.md` - Apply learned patterns
+
+### check_source
+Check if content has already been ingested.
+
+**When to use:** Before ingesting any new content
+**Process:**
+1. Search `memory/sources.md` for URL
+2. If found: Report "Already ingested on [date]" with summary
+3. If not found: Proceed with ingestion
+
+### log_source
+Add new source to memory after ingestion.
+
+**When to use:** After completing content ingestion
+**Template:**
+```markdown
+## [Date] - [Title]
+- **Source:** [Creator]
+- **URL:** [link]
+- **Type:** YouTube | Article | Podcast
+- **Status:** Ingested
+- **Concepts Extracted:** [count]
+- **Notes:** [brief summary]
+```
+
+### log_decision
+Record approval/rejection decision.
+
+**When to use:** After human makes any knowledge decision
+**Template:**
+```markdown
+## [Date] - [Decision Title]
+- **Source:** [Content source]
+- **Proposed:** [What was proposed]
+- **Location:** [Target path]
+- **Decision:** Approved | Rejected | Modified
+- **Rationale:** [Why]
+- **Implemented:** Yes | No
+```
+
+### log_lesson
+Record insight for future reference.
+
+**When to use:** When pattern or insight emerges
+**Template:**
+```markdown
+## Lesson: [Title]
+- **Date:** [When learned]
+- **Context:** [Situation]
+- **Lesson:** [What to remember]
+- **Applies to:** [Future situations]
+```
 
 ---
 

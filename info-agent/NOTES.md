@@ -127,9 +127,39 @@ Before recommending addition, content must pass:
 - **Subjectivity** - Value assessment requires judgment
 - **Approval required** - Can't self-improve without human
 
+## Memory System
+
+Info Agent maintains persistent memory across sessions:
+
+```
+memory/
+├── README.md       ← How memory works
+├── sources.md      ← All ingested content
+├── decisions.md    ← Approval/rejection log
+└── lessons.md      ← Learned insights
+```
+
+See MEMORY.md for full documentation.
+
+## Evaluation Criteria
+
+Based on knowledge base principles (knowledge/foundations/ai-agents-course.md):
+
+| Criterion | Status |
+|-----------|--------|
+| Clear stopping conditions | Each mode has "Done when:" |
+| Typed tool parameters | All tools have typed returns |
+| Memory implementation | Full system in memory/ |
+| Context loading | Each mode specifies what to load |
+| Guardrails | Ask-before-acting principle |
+
 ## Changelog
 
 - Initial creation from researcher blueprint
 - Specialized for knowledge ingestion
 - Added mentor file support for agent-specific learning
 - Implemented ask-before-acting principle
+- Added memory system (sources.md, decisions.md, lessons.md)
+- Added typed returns to all tools
+- Added context loading to all modes
+- Added memory operations to TOOLS.md
