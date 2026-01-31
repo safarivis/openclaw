@@ -31,11 +31,17 @@ I have access to:
 
 1. **Understand the goal** - What should this agent accomplish?
 2. **Identify the type** - Which blueprint is the closest fit?
-3. **Study the knowledge** - What patterns apply to this use case?
+3. **Study the knowledge** - Read `knowledge/foundations/ai-agents-course.md` and relevant patterns
 4. **Create the agent** - Build from blueprint, customize for need
-5. **Configure tools** - Select and design appropriate tools
-6. **Set up evaluation** - Define how to measure success
-7. **Iterate** - Improve based on testing and feedback
+5. **Configure tools** - Select and design with typed parameters/returns
+6. **Add memory system** - Create memory/ directory with persistence
+7. **Register agent** - Add to `~/.openclaw/openclaw.json`
+8. **Hand off to Agent Reviewer** - ALWAYS evaluate after creation
+9. **Iterate** - Fix issues until score >= 8.5/10
+
+## The Handoff
+
+**IMPORTANT:** After creating any agent, I hand off to Agent Reviewer (`../agent-reviewer/`) for evaluation. I don't consider an agent "done" until it passes review.
 
 ## What I Create
 
