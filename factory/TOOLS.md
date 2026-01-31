@@ -8,27 +8,36 @@ Tools I use to build and improve agents.
 Read from the knowledge base.
 
 **When to use:** Understanding patterns, reviewing concepts before designing
-**Paths:**
-- `../knowledge/foundations/` - Core agent concepts
-- `../knowledge/patterns/` - Design patterns
-- `../knowledge/tools/` - Tool design guides
-- `../knowledge/evals/` - Evaluation methods
+**Parameters:**
+- path (string, required): Path relative to knowledge/, e.g., "patterns/memory.md"
 
-**Example:**
+**Returns:**
+```yaml
+type: object
+properties:
+  content: string - File contents
+  path: string - Full path read
 ```
-read_knowledge("patterns/context-engineering.md")
-```
+
+**Paths:**
+- `foundations/` - Core agent concepts
+- `patterns/` - Design patterns
+- `tools/` - Tool design guides
+- `evals/` - Evaluation methods
 
 ### search_knowledge
 Search for relevant knowledge.
 
 **When to use:** Finding patterns for specific problems
 **Parameters:**
-- query: What to search for
+- query (string, required): What to search for
 
-**Example:**
-```
-search_knowledge("how to handle rate limiting")
+**Returns:**
+```yaml
+type: object
+properties:
+  matches: array - Matching files with excerpts
+  count: integer - Number of matches
 ```
 
 ## Blueprint Operations
@@ -37,18 +46,30 @@ search_knowledge("how to handle rate limiting")
 List available blueprints.
 
 **When to use:** Choosing a starting point for new agent
-**Returns:** Blueprint names with brief descriptions
+**Parameters:** None
+
+**Returns:**
+```yaml
+type: array
+items:
+  - name: string - Blueprint name
+  - description: string - Brief purpose
+  - best_for: string - Use cases
+```
 
 ### read_blueprint
 Read a complete blueprint.
 
 **When to use:** Understanding a blueprint before customizing
 **Parameters:**
-- blueprint: researcher, writer, coder, business
+- blueprint (enum, required): "researcher" | "writer" | "coder" | "business"
 
-**Example:**
-```
-read_blueprint("researcher")
+**Returns:**
+```yaml
+type: object
+properties:
+  files: object - All blueprint files (IDENTITY, SOUL, AGENTS, TOOLS, NOTES)
+  path: string - Blueprint location
 ```
 
 ### copy_blueprint
@@ -56,13 +77,17 @@ Create new workspace from blueprint.
 
 **When to use:** Starting a new agent build
 **Parameters:**
-- blueprint: Source blueprint
-- destination: New workspace path
-- name: New agent name
+- blueprint (enum, required): "researcher" | "writer" | "coder" | "business"
+- destination (string, required): New workspace path
+- name (string, required): New agent name
 
-**Example:**
-```
-copy_blueprint("researcher", "../05-competitor-intel", "Competitor Intel Agent")
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  path: string - Created workspace path
+  files_created: array - List of files created
 ```
 
 ## Workspace Operations
@@ -72,24 +97,53 @@ Create a new agent workspace from scratch.
 
 **When to use:** When no blueprint fits
 **Parameters:**
-- path: Workspace location
-- name: Agent name
+- path (string, required): Workspace location
+- name (string, required): Agent name
+
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  path: string - Created workspace
+  files_created: array - List of template files
+```
 
 ### read_workspace
 Read an existing agent's configuration.
 
 **When to use:** Understanding existing agents, preparing improvements
 **Parameters:**
-- path: Workspace location
+- path (string, required): Workspace location
+
+**Returns:**
+```yaml
+type: object
+properties:
+  identity: string - IDENTITY.md content
+  soul: string - SOUL.md content
+  agents: string - AGENTS.md content
+  tools: string - TOOLS.md content
+  notes: string - NOTES.md content
+  has_memory: boolean - Whether memory/ exists
+```
 
 ### update_workspace
 Modify an existing agent.
 
 **When to use:** Improving agents, fixing issues
 **Parameters:**
-- path: Workspace location
-- file: Which file to update
-- changes: What to change
+- path (string, required): Workspace location
+- file (enum, required): "IDENTITY.md" | "SOUL.md" | "AGENTS.md" | "TOOLS.md" | "NOTES.md"
+- changes (string, required): Content to update
+
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  file: string - Updated file path
+```
 
 ## Evaluation
 
@@ -98,36 +152,53 @@ Execute evaluation against an agent.
 
 **When to use:** Testing agent performance
 **Parameters:**
-- workspace: Agent to test
-- eval_set: Test cases to run
+- workspace (string, required): Agent path to test
+- eval_set (string, optional): Test cases file (default: all)
+
+**Returns:**
+```yaml
+type: object
+properties:
+  passed: integer - Tests passed
+  failed: integer - Tests failed
+  score: number - Percentage score
+  details: array - Individual test results
+```
 
 ### compare_agents
 Run comparison between two agents.
 
 **When to use:** A/B testing, variant comparison
 **Parameters:**
-- workspace_a: First agent
-- workspace_b: Second agent
-- test_cases: Inputs to test
+- workspace_a (string, required): First agent path
+- workspace_b (string, required): Second agent path
+- test_cases (array, optional): Inputs to test
+
+**Returns:**
+```yaml
+type: object
+properties:
+  winner: string - Path of better agent
+  scores: object - Score for each agent
+  differences: array - Key differences found
+```
 
 ## Documentation
 
 ### add_lesson
-Add a lesson learned to the knowledge base.
+Add a lesson learned to memory.
 
-**When to use:** After discovering something new that could help future agent building
+**When to use:** After discovering something new
 **Parameters:**
-- title: Brief description
-- context: What happened
-- lesson: What was learned
-- applies_to: When to remember this
+- title (string, required): Brief description
+- context (string, required): What happened
+- lesson (string, required): What was learned
+- applies_to (string, required): When to remember this
 
-**Example:**
-```
-add_lesson(
-  "Check tool count",
-  "Built agent with 20 tools, it got confused",
-  "Keep tools under 15, consolidate related functions",
-  "Agent design, tool selection"
-)
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  path: string - Where lesson was saved
 ```

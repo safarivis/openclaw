@@ -9,16 +9,35 @@ Read all files from an agent workspace.
 
 **When to use:** Starting any review, loading agent configuration
 **Parameters:**
-- path: Workspace directory path
+- path (string, required): Workspace directory path
 
-**Returns:** Contents of IDENTITY.md, SOUL.md, AGENTS.md, TOOLS.md, NOTES.md
+**Returns:**
+```yaml
+type: object
+properties:
+  identity: string - IDENTITY.md content
+  soul: string - SOUL.md content
+  agents: string - AGENTS.md content
+  tools: string - TOOLS.md content
+  notes: string - NOTES.md content
+  memory: string | null - MEMORY.md if exists
+  has_memory_dir: boolean - Whether memory/ exists
+```
 
 ### read_file
 Read a specific file.
 
 **When to use:** Focused review, checking specific concerns
 **Parameters:**
-- path: Full file path
+- path (string, required): Full file path
+
+**Returns:**
+```yaml
+type: object
+properties:
+  content: string - File contents
+  exists: boolean - Whether file was found
+```
 
 ## Knowledge Base Access
 
@@ -26,22 +45,41 @@ Read a specific file.
 Read from the knowledge base.
 
 **When to use:** Loading evaluation criteria
+**Parameters:**
+- path (string, required): Path relative to knowledge/
+
+**Returns:**
+```yaml
+type: object
+properties:
+  content: string - File contents
+  path: string - Full path read
+```
+
 **Key paths:**
-- `../knowledge/foundations/ai-agents-course.md` - Core concepts
-- `../knowledge/patterns/context-engineering.md` - Context principles
-- `../knowledge/patterns/reflection.md` - Self-improvement patterns
-- `../knowledge/patterns/multi-agent.md` - Coordination patterns
-- `../knowledge/patterns/guardrails.md` - Safety patterns
-- `../knowledge/patterns/memory.md` - Persistence patterns
-- `../knowledge/tools/README.md` - Tool design principles
-- `../knowledge/evals/README.md` - Evaluation methods
+- `foundations/ai-agents-course.md` - Core concepts
+- `patterns/context-engineering.md` - Context principles
+- `patterns/reflection.md` - Self-improvement patterns
+- `patterns/multi-agent.md` - Coordination patterns
+- `patterns/guardrails.md` - Safety patterns
+- `patterns/memory.md` - Persistence patterns
+- `tools/README.md` - Tool design principles
+- `evals/README.md` - Evaluation methods
 
 ### search_knowledge
 Search knowledge base for specific topics.
 
 **When to use:** Finding relevant principles for specific issues
 **Parameters:**
-- query: What to search for
+- query (string, required): What to search for
+
+**Returns:**
+```yaml
+type: object
+properties:
+  matches: array - Files with matching content
+  count: integer - Number of matches
+```
 
 ## Evaluation Tools
 
@@ -50,19 +88,36 @@ Score a file against criteria.
 
 **When to use:** Systematic evaluation
 **Parameters:**
-- file: Content to evaluate
-- criteria: What to check against
+- file (string, required): Content to evaluate
+- criteria (string, required): What to check against
 
-**Returns:** Score (1-10) with reasoning
+**Returns:**
+```yaml
+type: object
+properties:
+  score: number - Score 1-10
+  reasoning: string - Why this score
+  issues: array - Specific problems found
+```
 
 ### compare_files
 Compare two versions of a file.
 
 **When to use:** A/B comparison, before/after evaluation
 **Parameters:**
-- file_a: First version
-- file_b: Second version
-- criteria: Comparison dimensions
+- file_a (string, required): First version content
+- file_b (string, required): Second version content
+- criteria (string, optional): Comparison dimensions
+
+**Returns:**
+```yaml
+type: object
+properties:
+  winner: string - "a" | "b" | "tie"
+  score_a: number - Score for first file
+  score_b: number - Score for second file
+  differences: array - Key differences
+```
 
 ## Reporting
 
@@ -71,16 +126,32 @@ Create structured review report.
 
 **When to use:** Compiling final review
 **Parameters:**
-- findings: All evaluation results
-- format: summary, detailed, or checklist
+- findings (object, required): All evaluation results
+- format (enum, optional): "summary" | "detailed" | "checklist" (default: "detailed")
+
+**Returns:**
+```yaml
+type: object
+properties:
+  report: string - Formatted report content
+  format: string - Format used
+```
 
 ### write_file
 Save review results.
 
 **When to use:** Persisting review for reference
 **Parameters:**
-- path: Where to save
-- content: Report content
+- path (string, required): Where to save
+- content (string, required): Report content
+
+**Returns:**
+```yaml
+type: object
+properties:
+  success: boolean
+  path: string - Saved file path
+```
 
 ## Evaluation Criteria Reference
 
