@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-01-31T17:18:05.839334",
+  "agents": {
+    "factory": {
+      "score": 100.0,
+      "passed": 12,
+      "failed": 0,
+      "total": 12
+    },
+    "agent-reviewer": {
+      "score": 100.0,
+      "passed": 12,
+      "failed": 0,
+      "total": 12
+    },
+    "info-agent": {
+      "score": 100.0,
+      "passed": 12,
+      "failed": 0,
+      "total": 12
+    },
+    "brand-agent": {
+      "score": 100.0,
+      "passed": 12,
+      "failed": 0,
+      "total": 12
+    }
+  },
+  "overall_score": 100.0
+}

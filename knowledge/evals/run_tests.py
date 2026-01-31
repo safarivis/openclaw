@@ -5,9 +5,17 @@ Agent Structure Test Runner
 Tests agent workspaces against knowledge base standards.
 Run from clawd-lab directory: python knowledge/evals/run_tests.py
 
+Commands:
+  (default)        Run tests and show results
+  --save-baseline  Save current scores as baseline
+  --compare        Compare against baseline, show deltas
+  --gate           Exit 1 if any agent score decreased (for CI/pre-push)
+  -v, --verbose    Show detailed test results
+
 KISS: Only tests what we can verify without running the agent.
 """
 
+import json
 import os
 import re
 import sys
@@ -23,6 +31,10 @@ AGENT_DIRS = [
     "info-agent",
     "brand-agent",
 ]
+
+# Results directory
+RESULTS_DIR = Path(__file__).parent / "results"
+BASELINE_FILE = RESULTS_DIR / "baseline.json"
 
 # Colors for terminal output
 GREEN = "\033[92m"
@@ -168,11 +180,56 @@ def test_agent(agent_dir: str, config: dict) -> dict:
         else:
             results["failed"] += 1
 
+    # Calculate score
+    total = results["passed"] + results["failed"]
+    results["score"] = round((results["passed"] / total * 100), 1) if total > 0 else 0
+    results["total"] = total
+
     return results
 
 
-def print_results(all_results: list[dict], verbose: bool = False):
-    """Print test results."""
+def load_baseline() -> dict | None:
+    """Load baseline scores if they exist."""
+    if BASELINE_FILE.exists():
+        with open(BASELINE_FILE) as f:
+            return json.load(f)
+    return None
+
+
+def save_baseline(all_results: list[dict]):
+    """Save current scores as baseline."""
+    RESULTS_DIR.mkdir(exist_ok=True)
+
+    baseline = {
+        "timestamp": datetime.now().isoformat(),
+        "agents": {}
+    }
+
+    total_passed = 0
+    total_tests = 0
+
+    for result in all_results:
+        baseline["agents"][result["agent"]] = {
+            "score": result["score"],
+            "passed": result["passed"],
+            "failed": result["failed"],
+            "total": result["total"]
+        }
+        total_passed += result["passed"]
+        total_tests += result["total"]
+
+    baseline["overall_score"] = round((total_passed / total_tests * 100), 1) if total_tests > 0 else 0
+
+    with open(BASELINE_FILE, "w") as f:
+        json.dump(baseline, f, indent=2)
+
+    print(f"\n{GREEN}Baseline saved to: {BASELINE_FILE}{RESET}")
+    print(f"Overall score: {baseline['overall_score']}%")
+    print(f"Timestamp: {baseline['timestamp']}")
+
+
+def print_results(all_results: list[dict], verbose: bool = False, baseline: dict = None):
+    """Print test results with optional baseline comparison."""
     print(f"\n{BOLD}{'=' * 60}{RESET}")
     print(f"{BOLD}              AGENT STRUCTURE TEST RESULTS{RESET}")
     print(f"{BOLD}{'=' * 60}{RESET}\n")
@@ -180,20 +237,20 @@ def print_results(all_results: list[dict], verbose: bool = False):
     total_passed = 0
     total_failed = 0
     total_warnings = 0
+    regressions = []
+    improvements = []
 
     for result in all_results:
         agent = result["agent"]
         passed = result["passed"]
         failed = result["failed"]
         warnings = result["warnings"]
-        total = passed + failed
+        total = result["total"]
+        score = result["score"]
 
         total_passed += passed
         total_failed += failed
         total_warnings += warnings
-
-        # Calculate score
-        score = (passed / total * 100) if total > 0 else 0
 
         # Status color
         if failed == 0:
@@ -211,7 +268,21 @@ def print_results(all_results: list[dict], verbose: bool = False):
         filled = int(bar_width * passed / total) if total > 0 else 0
         bar = "█" * filled + "░" * (bar_width - filled)
 
-        print(f"  {agent:20} {bar} {passed}/{total} ({score:.0f}%) {color}[{status}]{RESET}")
+        # Baseline comparison
+        delta_str = ""
+        if baseline and agent in baseline.get("agents", {}):
+            old_score = baseline["agents"][agent]["score"]
+            delta = score - old_score
+            if delta > 0:
+                delta_str = f" {GREEN}↑ +{delta:.0f}%{RESET}"
+                improvements.append(agent)
+            elif delta < 0:
+                delta_str = f" {RED}↓ {delta:.0f}%{RESET}"
+                regressions.append(agent)
+            else:
+                delta_str = f" {YELLOW}={RESET}"
+
+        print(f"  {agent:20} {bar} {passed}/{total} ({score:.0f}%) {color}[{status}]{RESET}{delta_str}")
 
         # Verbose: show details
         if verbose:
@@ -228,19 +299,40 @@ def print_results(all_results: list[dict], verbose: bool = False):
 
     print(f"\n{BOLD}{'─' * 60}{RESET}")
     print(f"  TOTAL: {total_passed}/{total} passed ({overall_score:.0f}%)")
+
+    # Baseline comparison summary
+    if baseline:
+        old_overall = baseline.get("overall_score", 0)
+        delta = overall_score - old_overall
+        if delta > 0:
+            print(f"  {GREEN}Baseline: {old_overall:.0f}% → {overall_score:.0f}% (+{delta:.0f}%) IMPROVED{RESET}")
+        elif delta < 0:
+            print(f"  {RED}Baseline: {old_overall:.0f}% → {overall_score:.0f}% ({delta:.0f}%) REGRESSION{RESET}")
+        else:
+            print(f"  {YELLOW}Baseline: {old_overall:.0f}% → {overall_score:.0f}% (no change){RESET}")
+
     if total_warnings > 0:
         print(f"  {YELLOW}Warnings: {total_warnings} (recommended files missing){RESET}")
     if total_failed > 0:
         print(f"  {RED}Failed: {total_failed} checks need attention{RESET}")
+
+    if regressions:
+        print(f"\n  {RED}REGRESSIONS: {', '.join(regressions)}{RESET}")
+    if improvements:
+        print(f"  {GREEN}IMPROVEMENTS: {', '.join(improvements)}{RESET}")
+
     print(f"{BOLD}{'─' * 60}{RESET}\n")
 
-    return total_failed == 0
+    return total_failed == 0, regressions
 
 
 def main():
     """Main entry point."""
     # Parse args
     verbose = "-v" in sys.argv or "--verbose" in sys.argv
+    save_baseline_flag = "--save-baseline" in sys.argv
+    compare_flag = "--compare" in sys.argv
+    gate_flag = "--gate" in sys.argv
 
     # Find project root (clawd-lab)
     script_path = Path(__file__).resolve()
@@ -262,11 +354,35 @@ def main():
         else:
             print(f"{YELLOW}Warning: {agent_dir} not found, skipping{RESET}")
 
-    # Print results
-    success = print_results(all_results, verbose)
+    # Save baseline if requested
+    if save_baseline_flag:
+        save_baseline(all_results)
+        sys.exit(0)
 
-    # Exit code
-    sys.exit(0 if success else 1)
+    # Load baseline for comparison
+    baseline = None
+    if compare_flag or gate_flag:
+        baseline = load_baseline()
+        if not baseline:
+            print(f"{YELLOW}No baseline found. Run with --save-baseline first.{RESET}")
+            if gate_flag:
+                sys.exit(1)
+
+    # Print results
+    all_passed, regressions = print_results(all_results, verbose, baseline)
+
+    # Gate mode: exit 1 if any regressions
+    if gate_flag:
+        if regressions:
+            print(f"{RED}GATE FAILED: Regressions detected in {', '.join(regressions)}{RESET}")
+            print(f"{RED}Push blocked. Fix regressions before pushing.{RESET}\n")
+            sys.exit(1)
+        else:
+            print(f"{GREEN}GATE PASSED: No regressions. Safe to push.{RESET}\n")
+            sys.exit(0)
+
+    # Normal exit code
+    sys.exit(0 if all_passed else 1)
 
 
 if __name__ == "__main__":
