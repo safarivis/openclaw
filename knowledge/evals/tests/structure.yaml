@@ -1,0 +1,36 @@
+# Structure Tests
+# Checks agent workspace completeness against knowledge base standards
+
+required_files:
+  - IDENTITY.md
+  - SOUL.md
+  - AGENTS.md
+  - TOOLS.md
+  - NOTES.md
+
+recommended_files:
+  - MEMORY.md
+  - memory/
+
+agents_md_checks:
+  - pattern: "Done when:"
+    description: "Modes must have stopping conditions"
+    min_occurrences: 1
+
+tools_md_checks:
+  - pattern: "(string|integer|boolean|enum|array|object)"
+    description: "Tools must have typed parameters"
+    min_occurrences: 1
+  - pattern: "Returns:"
+    description: "Tools must specify returns"
+    min_occurrences: 1
+
+identity_md_checks:
+  - pattern: "## Who I Am|## My Mission|## What I"
+    description: "Identity must have clear sections"
+    min_occurrences: 1
+
+soul_md_checks:
+  - pattern: "##"
+    description: "Soul must have principle sections"
+    min_occurrences: 2
