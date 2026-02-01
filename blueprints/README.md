@@ -13,6 +13,16 @@ Reusable templates for common agent types. Start here instead of from scratch.
 
 ## How to Use Blueprints
 
+### 0. Capture Intent First (WHY.md)
+**Before building**, fill out the WHY.md template:
+```bash
+cp blueprints/WHY.md my-new-agent/WHY.md
+# Fill in: Problem, Users, Constraints, Success Criteria
+# Get approval before proceeding
+```
+
+This prevents drift by documenting the "why" before the "how."
+
 ### 1. Choose a Blueprint
 Pick the closest match to your agent's primary function.
 
@@ -26,6 +36,7 @@ Edit each file to match your specific needs:
 
 | File | What to Customize |
 |------|-------------------|
+| WHY.md | Problem, users, constraints (fill FIRST) |
 | IDENTITY.md | Name, emoji, specific role |
 | SOUL.md | Values and principles for your domain |
 | AGENTS.md | Specific modes and behaviors |
@@ -51,12 +62,15 @@ Each blueprint contains:
 
 ```
 blueprint-name/
+├── WHY.md         ← Intent doc (copy from blueprints/WHY.md)
 ├── IDENTITY.md    ← Who the agent is
 ├── SOUL.md        ← Core values and principles
 ├── AGENTS.md      ← Operating modes and behaviors
 ├── TOOLS.md       ← Available tools and usage
 └── NOTES.md       ← When to use, limitations, customization tips
 ```
+
+**Note:** WHY.md is not in each blueprint folder - copy it from `blueprints/WHY.md` when starting a new agent.
 
 ## Creating New Blueprints
 

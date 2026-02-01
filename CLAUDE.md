@@ -11,7 +11,8 @@ This is the **Agent Factory** - a system for building and improving AI agents us
 │  "Build me an agent for X"                                  │
 │                    ↓                                        │
 │  1. AGENT BUILDER (factory/)                                │
-│     - Read knowledge/foundations/ai-agents-course.md        │
+│     - Create WHY.md FIRST (from blueprints/WHY.md)          │
+│     - Get user approval on intent before proceeding         │
 │     - Read knowledge/patterns/ for relevant patterns        │
 │     - Select appropriate blueprint from blueprints/         │
 │     - Create agent workspace with all files                 │
@@ -60,6 +61,7 @@ This is the **Agent Factory** - a system for building and improving AI agents us
 | knowledge/foundations/ai-agents-course.md | Core agent concepts (READ FIRST) |
 | knowledge/patterns/ | Design patterns for agents |
 | blueprints/README.md | How to use blueprints |
+| blueprints/WHY.md | Intent template (fill BEFORE building) |
 
 ## Blueprints Available
 
@@ -83,6 +85,7 @@ This is the **Agent Factory** - a system for building and improving AI agents us
 ## Agent Quality Checklist
 
 Every agent must have:
+- [ ] **WHY.md with captured intent** (Problem, Users, Constraints)
 - [ ] Clear IDENTITY.md with mission
 - [ ] AGENTS.md with modes + "Done when:" conditions
 - [ ] TOOLS.md with typed parameters and returns

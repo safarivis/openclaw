@@ -9,6 +9,7 @@ required_files:
   - NOTES.md
 
 recommended_files:
+  - WHY.md
   - MEMORY.md
   - memory/
 

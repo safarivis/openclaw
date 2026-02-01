@@ -84,7 +84,7 @@ properties:
 ## Evaluation Tools
 
 ### score_file
-Score a file against criteria.
+Score a file against criteria with categorized issues.
 
 **When to use:** Systematic evaluation
 **Parameters:**
@@ -97,8 +97,19 @@ type: object
 properties:
   score: number - Score 1-10
   reasoning: string - Why this score
-  issues: array - Specific problems found
+  issues: array
+    - severity: enum - "critical" | "major" | "minor" | "polish"
+    - category: enum - "identity" | "capability" | "safety" | "clarity"
+    - description: string - What's wrong
+    - fix: string - How to fix it
+    - line: number | null - Line reference if applicable
 ```
+
+**Severity Guide:**
+- **critical**: Blocks core functionality (0 tolerance)
+- **major**: Significant problems (should fix before use)
+- **minor**: Small issues (fix when convenient)
+- **polish**: Suggestions (optional improvements)
 
 ### compare_files
 Compare two versions of a file.
@@ -122,12 +133,13 @@ properties:
 ## Reporting
 
 ### generate_report
-Create structured review report.
+Create structured review report with categorized issues.
 
 **When to use:** Compiling final review
 **Parameters:**
 - findings (object, required): All evaluation results
 - format (enum, optional): "summary" | "detailed" | "checklist" (default: "detailed")
+- group_by (enum, optional): "severity" | "category" | "file" (default: "severity")
 
 **Returns:**
 ```yaml
@@ -135,6 +147,38 @@ type: object
 properties:
   report: string - Formatted report content
   format: string - Format used
+  summary:
+    overall_score: number
+    critical_count: number
+    major_count: number
+    minor_count: number
+    polish_count: number
+    pass: boolean - True if score >= 8.5 AND critical_count == 0
+```
+
+**Report Template (severity grouping):**
+```markdown
+# Agent Review: [name]
+
+**Score:** X/10 | **Status:** PASS/FAIL
+**Critical:** N | **Major:** N | **Minor:** N | **Polish:** N
+
+## Critical Issues (must fix)
+- [category] description → fix
+
+## Major Issues (should fix)
+- [category] description → fix
+
+## Minor Issues (nice to fix)
+- [category] description → fix
+
+## Polish (optional)
+- [category] description → fix
+
+## Top 3 Priority Fixes
+1. ...
+2. ...
+3. ...
 ```
 
 ### write_file
@@ -155,35 +199,64 @@ properties:
 
 ## Evaluation Criteria Reference
 
-### IDENTITY.md Checklist
+### File → Category Mapping
+
+| File | Primary Category | Secondary |
+|------|-----------------|-----------|
+| WHY.md | Identity | Clarity |
+| IDENTITY.md | Identity | Clarity |
+| SOUL.md | Safety | Identity |
+| AGENTS.md | Capability | Clarity |
+| TOOLS.md | Capability | Safety |
+| MEMORY.md | Capability | Clarity |
+| NOTES.md | Clarity | - |
+
+### WHY.md Checklist (Identity/Clarity)
+- [ ] Problem statement is concrete, not vague
+- [ ] Target users clearly defined
+- [ ] Success criteria are measurable
+- [ ] Constraints explicitly listed
+- [ ] Key decisions documented with rationale
+
+### IDENTITY.md Checklist (Identity/Clarity)
 - [ ] Clear name and role
 - [ ] Specific expertise listed
 - [ ] Approach is step-by-step
 - [ ] Honest "What I'm Not" section
 - [ ] Mission aligns with expertise
 
-### SOUL.md Checklist
+### SOUL.md Checklist (Safety/Identity)
 - [ ] Values are actionable, not platitudes
 - [ ] Each value guides real decisions
 - [ ] Values are specific to this agent type
 - [ ] No contradictions between values
+- [ ] Includes constraints/limits (safety)
 
-### AGENTS.md Checklist
+### AGENTS.md Checklist (Capability/Clarity)
 - [ ] Each mode has clear trigger
 - [ ] Each mode has defined approach
 - [ ] Each mode has expected output
+- [ ] Each mode has "Done when:" condition
 - [ ] Modes don't overlap confusingly
 - [ ] Mode selection guidance included
 
-### TOOLS.md Checklist
+### TOOLS.md Checklist (Capability/Safety)
 - [ ] Tools are atomic (one action each)
 - [ ] Descriptions are specific
 - [ ] Parameters are typed/constrained
 - [ ] Usage guidelines included
-- [ ] Dangerous tools have warnings
+- [ ] Dangerous tools have warnings (safety)
+- [ ] Return types documented
 
-### NOTES.md Checklist
+### MEMORY.md Checklist (Capability/Clarity)
+- [ ] Memory structure documented
+- [ ] What to remember defined
+- [ ] What NOT to remember defined
+- [ ] Persistence strategy clear
+
+### NOTES.md Checklist (Clarity)
 - [ ] Purpose is documented
 - [ ] Customization tips included
 - [ ] Limitations are listed
 - [ ] Integration points noted
+- [ ] Changelog maintained

@@ -25,13 +25,31 @@ Comprehensive evaluation of an entire agent workspace.
 
 **Output:** Complete review report with:
 - Overall score (1-10)
-- Per-file scores and feedback
-- Top 3 priority improvements
-- Detailed findings by category
+- Issues grouped by severity (Critical → Major → Minor → Polish)
+- Issues grouped by category (Identity, Capability, Safety, Clarity)
+- Top 3 priority fixes
+- Per-file scores
+
+**Severity Levels:**
+| Level | Definition | Example |
+|-------|------------|---------|
+| **Critical** | Blocks core functionality, must fix | Missing IDENTITY.md, no modes defined |
+| **Major** | Significant problems, should fix | TOOLS.md lacks typed parameters |
+| **Minor** | Small issues, nice to fix | SOUL.md could be more specific |
+| **Polish** | Suggestions, optional | Could add more examples |
+
+**Review Categories:**
+| Category | What It Checks |
+|----------|----------------|
+| **Identity** | Is it clear who this agent is? Role, mission, boundaries |
+| **Capability** | Can it do what it claims? Modes, tools, workflows |
+| **Safety** | Are there guardrails? Limits, warnings, constraints |
+| **Clarity** | Is it well-documented? Examples, notes, memory |
 
 **Done when:**
 - All workspace files read
 - All criteria evaluated
+- Issues categorized by severity AND category
 - Score calculated
 - Report generated
 - Review logged to memory

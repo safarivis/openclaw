@@ -18,17 +18,17 @@ For understanding what agent to build.
 - Identify success criteria
 - Match to existing patterns/blueprints
 
-**Output:** Clear agent specification including:
-- Purpose and goals
+**Output:** Draft WHY.md including:
+- Problem statement
 - Target users
-- Key capabilities needed
-- Success metrics
+- Success criteria
+- Constraints
 - Recommended blueprint
 
 **Done when:**
-- Requirements are clear
+- WHY.md draft is complete
 - Blueprint is selected
-- User approves specification
+- User approves WHY.md
 
 Example: "I need something to help with customer emails"
 
@@ -38,7 +38,10 @@ For planning an agent architecture.
 
 **Trigger:** Clear requirements, ready to design, "Design an agent for..."
 
+**Prerequisite:** WHY.md should exist (from Discovery Mode or provided by user)
+
 **Context Load:**
+- `WHY.md` - Approved intent document
 - `../knowledge/foundations/ai-agents-course.md` - Core concepts
 - `../knowledge/patterns/` - Relevant patterns
 - `../knowledge/tools/README.md` - Tool design principles
@@ -78,26 +81,35 @@ For creating the actual agent workspace.
 - `../knowledge/patterns/memory.md` - Memory implementation
 - `../knowledge/tools/README.md` - Tool design
 - `../blueprints/[selected]/` - Base template
+- `../blueprints/WHY.md` - Intent template
 
 **Approach:**
-1. Create workspace directory (`../[agent-name]/`)
-2. Copy blueprint files as base
-3. Customize IDENTITY.md with specific mission
-4. Create SOUL.md with domain values
-5. Write AGENTS.md with modes + "Done when:" conditions
-6. Define TOOLS.md with typed parameters/returns
-7. Create MEMORY.md + memory/ directory
-8. Document in NOTES.md
-9. Register in `~/.openclaw/openclaw.json`
-10. **Hand off to Agent Reviewer for evaluation**
+1. **Create WHY.md FIRST** - Capture intent before building
+   - Copy from `../blueprints/WHY.md`
+   - Fill in: Problem, Users, Success Criteria, Constraints
+   - Get user approval on WHY.md before proceeding
+2. Create workspace directory (`../[agent-name]/`)
+3. Copy blueprint files as base
+4. Customize IDENTITY.md with specific mission
+5. Create SOUL.md with domain values
+6. Write AGENTS.md with modes + "Done when:" conditions
+7. Define TOOLS.md with typed parameters/returns
+8. Create MEMORY.md + memory/ directory
+9. Document in NOTES.md
+10. Register in `~/.openclaw/openclaw.json`
+11. **Hand off to Agent Reviewer for evaluation**
+
+**STOP GATE:** Do not proceed past step 1 without an approved WHY.md. This prevents drift by capturing intent upfront.
 
 **Output:**
+- WHY.md with captured intent (approved)
 - Complete agent workspace with all files
 - Registered in openclaw.json
 - Ready for Agent Reviewer evaluation
 
 **Done when:**
-- All workspace files created (IDENTITY, SOUL, AGENTS, TOOLS, NOTES, MEMORY)
+- WHY.md exists and is approved
+- All workspace files created (WHY, IDENTITY, SOUL, AGENTS, TOOLS, NOTES, MEMORY)
 - Memory directory exists with templates
 - Agent registered in openclaw.json
 - **Agent Reviewer has been invoked**
