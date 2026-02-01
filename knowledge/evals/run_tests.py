@@ -31,6 +31,7 @@ AGENT_DIRS = [
     "agents/info-agent",
     "agents/brand-agent",
     "agents/stock-research-agent",
+    "agents/seth-agent",
 ]
 
 # Results directory

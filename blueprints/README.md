@@ -41,6 +41,7 @@ Edit each file to match your specific needs:
 | SOUL.md | Values and principles for your domain |
 | AGENTS.md | Specific modes and behaviors |
 | TOOLS.md | Add/remove tools for your use case |
+| KNOWLEDGE.md | Domain knowledge, concepts, references |
 | NOTES.md | Document what you changed and why |
 
 ### 4. Register
@@ -58,19 +59,20 @@ Run the agent and iterate based on results.
 
 ## Blueprint Structure
 
-Each blueprint contains:
+Each agent should have:
 
 ```
-blueprint-name/
+agent-name/
 ├── WHY.md         ← Intent doc (copy from blueprints/WHY.md)
 ├── IDENTITY.md    ← Who the agent is
 ├── SOUL.md        ← Core values and principles
 ├── AGENTS.md      ← Operating modes and behaviors
 ├── TOOLS.md       ← Available tools and usage
+├── KNOWLEDGE.md   ← Domain knowledge (copy from blueprints/KNOWLEDGE.md)
 └── NOTES.md       ← When to use, limitations, customization tips
 ```
 
-**Note:** WHY.md is not in each blueprint folder - copy it from `blueprints/WHY.md` when starting a new agent.
+**Templates at root:** Copy `blueprints/WHY.md` and `blueprints/KNOWLEDGE.md` when starting.
 
 ## Creating New Blueprints
 

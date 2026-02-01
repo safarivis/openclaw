@@ -90,7 +90,8 @@ Every agent must have:
 - [ ] AGENTS.md with modes + "Done when:" conditions
 - [ ] TOOLS.md with typed parameters and returns
 - [ ] SOUL.md with actionable principles
-- [ ] MEMORY.md + memory/ directory
+- [ ] KNOWLEDGE.md (flat file, no folder)
+- [ ] NOTES.md with purpose and changelog
 - [ ] Registered in ~/.openclaw/openclaw.json
 - [ ] Reviewed by Agent Reviewer (score >= 8.5)
 

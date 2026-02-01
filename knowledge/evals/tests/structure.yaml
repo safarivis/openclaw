@@ -10,8 +10,7 @@ required_files:
 
 recommended_files:
   - WHY.md
-  - MEMORY.md
-  - memory/
+  - KNOWLEDGE.md
 
 agents_md_checks:
   - pattern: "Done when:"

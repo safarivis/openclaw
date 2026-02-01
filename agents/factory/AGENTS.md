@@ -88,13 +88,13 @@ For creating the actual agent workspace.
    - Copy from `../blueprints/WHY.md`
    - Fill in: Problem, Users, Success Criteria, Constraints
    - Get user approval on WHY.md before proceeding
-2. Create workspace directory (`../[agent-name]/`)
+2. Create workspace directory (`../agents/[agent-name]/`)
 3. Copy blueprint files as base
 4. Customize IDENTITY.md with specific mission
 5. Create SOUL.md with domain values
 6. Write AGENTS.md with modes + "Done when:" conditions
 7. Define TOOLS.md with typed parameters/returns
-8. Create MEMORY.md + memory/ directory
+8. Create KNOWLEDGE.md from template (flat, no folder)
 9. Document in NOTES.md
 10. Register in `~/.openclaw/openclaw.json`
 11. **Hand off to Agent Reviewer for evaluation**
@@ -109,8 +109,7 @@ For creating the actual agent workspace.
 
 **Done when:**
 - WHY.md exists and is approved
-- All workspace files created (WHY, IDENTITY, SOUL, AGENTS, TOOLS, NOTES, MEMORY)
-- Memory directory exists with templates
+- All workspace files created (WHY, IDENTITY, SOUL, AGENTS, TOOLS, KNOWLEDGE, NOTES)
 - Agent registered in openclaw.json
 - **Agent Reviewer has been invoked**
 
