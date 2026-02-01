@@ -1,0 +1,9 @@
+{
+  "stock-research": {
+    "command": "python3",
+    "args": ["/home/louisdup/clawd-lab/stock-research-agent/scripts/mcp_server.py"],
+    "env": {
+      "PYTHONPATH": "/home/louisdup/clawd-lab/stock-research-agent/scripts"
+    }
+  }
+}

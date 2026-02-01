@@ -26,10 +26,11 @@ from datetime import datetime
 
 # Agent directories to test (relative to clawd-lab)
 AGENT_DIRS = [
-    "factory",
-    "agent-reviewer",
-    "info-agent",
-    "brand-agent",
+    "agents/factory",
+    "agents/agent-reviewer",
+    "agents/info-agent",
+    "agents/brand-agent",
+    "agents/stock-research-agent",
 ]
 
 # Results directory

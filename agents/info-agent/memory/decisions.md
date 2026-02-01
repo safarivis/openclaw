@@ -19,3 +19,11 @@ Record of all approval/rejection decisions for knowledge additions.
 ## Decisions
 
 <!-- Add entries below -->
+
+## 2026-01-31 - Barry Zhang Anthropic Talk
+- **Source:** How We Build Effective Agents (YouTube)
+- **Proposed:** Add 3 new patterns (think-like-agent, emerging-patterns, when-to-build checklist)
+- **Location:** knowledge/patterns/ and knowledge/foundations/
+- **Decision:** Rejected
+- **Rationale:** User declined without explanation
+- **Implemented:** No
